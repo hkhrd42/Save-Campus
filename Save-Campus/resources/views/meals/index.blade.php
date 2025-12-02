@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('My Meals') }}
             </h2>
-            <a href="{{ route('meals.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <a href="{{ route('meals.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:from-green-700 hover:to-emerald-700 focus:from-green-700 focus:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 + Add New Meal
             </a>
         </div>
@@ -33,7 +33,7 @@
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                             </div>
@@ -165,8 +165,8 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="{{ route('meals.show', $meal) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
-                                                <a href="{{ route('meals.edit', $meal) }}" class="text-yellow-600 hover:text-yellow-900 mr-3">Edit</a>
+                                                <a href="{{ route('meals.show', $meal) }}" class="text-green-600 hover:text-green-900 mr-3">View</a>
+                                                <a href="{{ route('meals.edit', $meal) }}" class="text-emerald-600 hover:text-emerald-900 mr-3">Edit</a>
                                                 <form action="{{ route('meals.destroy', $meal) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this meal?');">
                                                     @csrf
                                                     @method('DELETE')
@@ -191,7 +191,7 @@
                             <h3 class="mt-2 text-sm font-medium text-gray-900">No meals</h3>
                             <p class="mt-1 text-sm text-gray-500">Get started by creating a new meal.</p>
                             <div class="mt-6">
-                                <a href="{{ route('meals.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <a href="{{ route('meals.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     + Add New Meal
                                 </a>
                             </div>
