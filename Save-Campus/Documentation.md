@@ -112,3 +112,45 @@ Error Handling:
 Automatically redirects back to form
 Keeps old input values
 Shows custom error messages
+
+# Controllers
+command :  php artisan make:controller MealController --resource
+           php artisan make:controller BrowseMealController
+           php artisan make:controller ClaimController
+
+Controllers handle the application logic between routes and models. They receive requests, interact with models, and return responses (views or redirects).
+
+MVC Pattern
+Model: Database interactions (Meal, Claim, User)
+View: What users see (Blade templates)
+Controller: Business logic connecting them
+The Three Controllers
+1. MealController (Staff Management)
+Staff members manage their meals (CRUD operations)
+
+2. BrowseMealController (Student View)
+Students browse and view available meals (read-only)
+
+3. ClaimController (Critical Concurrency)
+Handles meal claiming with race condition prevention
+
+Why Transactions + lockForUpdate?
+The Problem (Race Condition)
+The Solution:
+lockForUpdate() locks the database row until transaction completes, forcing users to wait in line.
+
+Validation & Security
+Built-in Protections:
+
+✅ Authentication: Must be logged in
+✅ Role checking: Staff can't claim, students can't create
+✅ Double-claim prevention: One meal per user
+✅ Expiration checks: Can't claim expired meals
+✅ Concurrency safety: lockForUpdate() prevents race conditions
+✅ Authorization policies: Automatic via Form Requests
+
+| Method     | Route               | Description                                   |
+|------------|---------------------|-----------------------------------------------|
+| `index()`  | `GET /claims`       | User's claim history                          |
+| `store()`  | `POST /claims/{meal}` | **CRITICAL:** Claim a meal with transaction locking |
+| `destroy()`| `DELETE /claims/{claim}` | Cancel a claim, restore portion               |
