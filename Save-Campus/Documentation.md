@@ -244,3 +244,102 @@ Example 2: Student Claiming a Meal
 4. Validates: Not staff, not duplicate, has portions
 5. Transaction + Lock: Decrement portions
 6. Creates claim → Redirect to /claims
+
+# Blades
+Blade is Laravel's templating engine that makes it easy to create dynamic HTML. It allows you to:
+
+Use variables: {{ $meal->name }}
+Control structures: @if, @foreach, @auth
+Extend layouts: @extends('layouts.app')
+Include components: <x-button>
+
+MVC Flow with Views
+Request → Route → Controller → View → Response
+                      ↓          ↓
+                   Gets Data   Displays Data
+
+resources/views/
+├── layouts/
+│   └── app.blade.php (✅ Already exists from Breeze)
+│
+├── meals/ (Staff Views - CRUD)
+│   ├── index.blade.php ✅ Staff dashboard
+│   ├── create.blade.php ✅ Create meal form
+│   ├── edit.blade.php ✅ Edit meal form
+│   └── show.blade.php ✅ View meal details + claims list
+│
+├── browse/ (Student Views - Read Only)
+│   ├── index.blade.php ✅ Browse active meals (grid)
+│   └── show.blade.php ✅ Meal details + claim button
+│
+└── claims/
+    └── index.blade.php ✅ User's claimed meals
+
+    1. Staff Views (meals/)
+index.blade.php (Staff Dashboard)
+Purpose: Staff manage their posted meals
+
+✅ Table view with all staff's meals
+✅ Shows portions left, claims count, expiration
+✅ Status badges (Active/Expired)
+✅ Actions: View, Edit, Delete
+✅ Pagination support
+✅ Empty state with "Add Meal" CTA
+create.blade.php (Create Meal Form)
+Purpose: Staff post new meals
+
+✅ Form fields: Name, Description, Portions, Expiration
+✅ Field validation with error messages
+✅ @error directive shows validation errors
+✅ old() helper preserves input on error
+✅ Cancel button returns to dashboard
+edit.blade.php (Edit Meal Form)
+Purpose: Staff update existing meals
+
+✅ Pre-filled form with existing data
+✅ Shows current claim count
+✅ Same validation as create
+✅ PUT method for update
+show.blade.php (Meal Details for Staff)
+Purpose: View meal details and who claimed it
+
+✅ Full meal information
+✅ List of all claims with student info
+✅ Student name, email, claim timestamp
+✅ Edit button for quick access
+2. Student Views (browse/)
+index.blade.php (Browse Meals)
+Purpose: Students discover available meals
+
+✅ Grid layout (responsive: 1/2/3 columns)
+✅ Cards with meal info
+✅ Shows: portions left, staff name, expiration
+✅ "View Details" button on each card
+✅ Filters: Only active, non-expired meals
+✅ Pagination support
+✅ Empty state when no meals
+show.blade.php (Meal Details for Students)
+Purpose: View meal details and claim it
+
+✅ Full meal information display
+✅ Staff contact info
+✅ Smart claim button with conditions:
+✅ Shows "Claim" button if eligible
+✅ Shows "Already claimed" if duplicate
+✅ Shows "Expired" if no longer available
+✅ Shows "Staff cannot claim" warning
+✅ Visual status indicators
+✅ Rate-limited form submission
+3. Claims View (claims/)
+index.blade.php (My Claims)
+Purpose: Students see their claimed meals
+
+✅ Grid of claimed meals
+✅ Shows meal info, staff name, expiration
+✅ Status badge (Active/Expired)
+✅ "View" button to see meal details
+✅ "Cancel" button to unclaim (if not expired)
+✅ Confirmation dialog on cancel
+✅ Empty state with "Browse Meals" CTA
+
+# 
