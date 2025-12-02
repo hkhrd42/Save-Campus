@@ -6,9 +6,11 @@ use App\Models\Meal;
 use App\Http\Requests\StoreMealRequest;
 use App\Http\Requests\UpdateMealRequest;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class MealController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the staff's meals (staff dashboard).
      */

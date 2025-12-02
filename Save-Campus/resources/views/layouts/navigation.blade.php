@@ -1,34 +1,40 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="sticky top-0 z-50 bg-white border-b border-green-100 shadow-sm">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.67c.67-2.08 1.59-4.65 3.29-7.01C10 13 11 11 13 10c2-1 4-2 6-2v-1h-2z"/>
+                                <path d="M16.07 3.05l-1.41 1.41C14.9 4.24 15 4.12 15 4s-.1-.24-.24-.46l1.41-1.41c1.95 1.95 2.2 4.99.58 7.24l1.45 1.45c2.2-3.29 1.81-7.75-1.13-10.68z"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Save Campus</span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-medium">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
                     @if(Auth::user()->role === 'staff')
                         <!-- Staff Navigation -->
-                        <x-nav-link :href="route('meals.index')" :active="request()->routeIs('meals.*')">
+                        <x-nav-link :href="route('meals.index')" :active="request()->routeIs('meals.*')" class="font-medium">
                             {{ __('My Meals') }}
                         </x-nav-link>
                     @endif
 
                     @if(Auth::user()->role === 'student')
                         <!-- Student Navigation -->
-                        <x-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.*')">
+                        <x-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.*')" class="font-medium">
                             {{ __('Browse Meals') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')">
+                        <x-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')" class="font-medium">
                             {{ __('My Claims') }}
                         </x-nav-link>
                     @endif
@@ -39,7 +45,7 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:text-green-600 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
