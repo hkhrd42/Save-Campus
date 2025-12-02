@@ -154,3 +154,93 @@ Built-in Protections:
 | `index()`  | `GET /claims`       | User's claim history                          |
 | `store()`  | `POST /claims/{meal}` | **CRITICAL:** Claim a meal with transaction locking |
 | `destroy()`| `DELETE /claims/{claim}` | Cancel a claim, restore portion               |
+
+# Routes
+Routes map HTTP requests (URLs) to controller actions. They define what happens when users visit specific URLs in your application.
+
+Route Components Explained
+1. Route Groups with Middleware
+Applies auth middleware to ALL routes inside
+Users must be logged in to access any of these routes
+
+2. Resource Routes
+Automatically creates 7 RESTful routes:
+GET /meals → index()
+GET /meals/create → create()
+POST /meals → store()
+GET /meals/{meal} → show()
+GET /meals/{meal}/edit → edit()
+PUT/PATCH /meals/{meal} → update()
+DELETE /meals/{meal} → destroy()
+
+3. Inline Authorization
+Checks the MealPolicy::create() method
+Only staff can access meal management routes
+
+4. Rate Limiting
+Limits to 5 requests per 1 minute per user
+Prevents spam/abuse when claiming meals
+Returns 429 (Too Many Requests) if exceeded
+
+command: php artisan route:list --except-vendor
+
+web.php
+├── Public Routes
+│   └── GET / → Welcome page
+│
+└── Authenticated Routes (auth middleware)
+    ├── Profile Management
+    │   ├── GET /profile → Edit profile
+    │   ├── PATCH /profile → Update profile
+    │   └── DELETE /profile → Delete profile
+    │
+    ├── Staff Meal Management (can:create,Meal)
+    │   ├── GET /meals → meals.index (list all my meals)
+    │   ├── GET /meals/create → meals.create (create form)
+    │   ├── POST /meals → meals.store (save new meal)
+    │   ├── GET /meals/{meal} → meals.show (view meal)
+    │   ├── GET /meals/{meal}/edit → meals.edit (edit form)
+    │   ├── PUT/PATCH /meals/{meal} → meals.update (save changes)
+    │   └── DELETE /meals/{meal} → meals.destroy (delete meal)
+    │
+    ├── Browse Meals (All authenticated users)
+    │   ├── GET /browse → browse.index (list active meals)
+    │   └── GET /browse/{meal} → browse.show (view meal details)
+    │
+    └── Claim Management (Students)
+        ├── GET /claims → claims.index (my claims)
+        ├── POST /meals/{meal}/claim → claims.store (claim meal) [RATE LIMITED]
+        └── DELETE /claims/{claim} → claims.destroy (cancel claim)
+
+🔒 Security Layers
+Layer 1: Authentication
+✅ All routes require login
+Redirects to login page if not authenticated
+Layer 2: Authorization (Policy-Based)
+✅ Only staff can access /meals routes
+Uses MealPolicy::create() to check role === 'staff'
+Returns 403 Forbidden if not authorized
+Layer 3: Rate Limiting
+✅ Limits claiming to 5 attempts per minute
+Prevents spam/bot abuse
+Returns 429 Too Many Requests if exceeded
+
+Request → auth → throttle → can → Controller → Response
+   ↓         ↓        ↓         ↓         ↓
+Logged?  Rate OK?  Policy?  Execute   Return
+
+oute Behavior Examples
+Example 1: Staff Creating a Meal
+1. User visits: GET /meals/create
+2. Checks: ✅ Logged in? → ✅ Is staff? → Show form
+3. User submits: POST /meals
+4. Validates: StoreMealRequest
+5. Authorizes: MealPolicy::create()
+6. Creates meal → Redirect to /meals
+Example 2: Student Claiming a Meal
+1. User clicks "Claim": POST /meals/5/claim
+2. Checks: ✅ Logged in? → ✅ Under rate limit?
+3. Controller: ClaimController::store()
+4. Validates: Not staff, not duplicate, has portions
+5. Transaction + Lock: Decrement portions
+6. Creates claim → Redirect to /claims
