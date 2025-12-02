@@ -1,16 +1,17 @@
 # DataBase
+
 first need to create three tables for users(student staff), Meals, Claims.
 
 Users is already created just add some lines to distinguesh between student and staff
 
-Create a Meals Table by this command<br>
+Create a Meals Table by this command
     php artisan make:migration create_meals_table
-<br>
+
 add needed columns to the table
 
-Create a Claims Table by this command<br>
+Create a Claims Table by this command
     php artisan make:migration create_claims_table
-<br> add needed columns to the table
+add needed columns to the table
 
 Database Structure Overview:
 1️⃣ Users Table ✓
@@ -40,9 +41,7 @@ user_id: Links to the student claiming it (foreign key → users.id)
 timestamps: created_at, updated_at
 Purpose: Tracks which students have claimed which meals.
 
-
-# Model relationship
-
+# Modelrelationship
 Models are PHP classes that represent your database tables. They allow you to interact with the database using simple PHP code instead of writing SQL queries.
 
 User Model = users table
@@ -63,3 +62,22 @@ USER (Staff)
   CLAIMS
     ↓ belongsTo
 USER (Student)
+
+# Policies
+What are Policies?
+Policies are Laravel's way of organizing authorization logic. They determine whether a user can perform specific actions (like create, view, update, delete) on a resource. This keeps authorization logic centralized and reusable, separate from your controllers.
+
+How They Work
+Policy Methods: Each method checks if a user has permission for an action
+Automatic Resolution: Laravel can automatically apply policies when you use authorize() in controllers or @can in views
+Clean Controllers: Your controllers stay clean - just call $this->authorize('update', $meal) instead of writing if-statements
+What This Policy Does
+create: Only staff members can create meals
+update: Only the user who created the meal can update it
+delete: Only the user who created the meal can delete it
+
+command: 
+php artisan make:policy MealPolicy --model=Meal
+
+# Validation
+
