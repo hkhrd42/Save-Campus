@@ -15,6 +15,23 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->role === 'staff')
+                        <!-- Staff Navigation -->
+                        <x-nav-link :href="route('meals.index')" :active="request()->routeIs('meals.*')">
+                            {{ __('My Meals') }}
+                        </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->role === 'student')
+                        <!-- Student Navigation -->
+                        <x-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.*')">
+                            {{ __('Browse Meals') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')">
+                            {{ __('My Claims') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +87,23 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(Auth::user()->role === 'staff')
+                <!-- Staff Navigation -->
+                <x-responsive-nav-link :href="route('meals.index')" :active="request()->routeIs('meals.*')">
+                    {{ __('My Meals') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(Auth::user()->role === 'student')
+                <!-- Student Navigation -->
+                <x-responsive-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.*')">
+                    {{ __('Browse Meals') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')">
+                    {{ __('My Claims') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
