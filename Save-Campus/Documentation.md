@@ -81,3 +81,34 @@ php artisan make:policy MealPolicy --model=Meal
 
 # Validation
 
+Form Requests are custom request classes that encapsulate validation logic. Instead of cluttering your controllers with validation rules, you move them to dedicated classes.
+
+How It Works
+Request hits your controller method
+Laravel automatically runs the Form Request validation before the controller method executes
+If validation fails → automatically redirects back with errors
+If validation passes → controller method receives the validated data
+
+commanda: 
+php artisan make:request StoreMealRequest
+php artisan make:request UpdateMealRequest
+
+Benefits
+Clean Controllers: Controllers stay focused on business logic, not validation
+Reusable: Same validation rules can be used across multiple places
+Authorization: Can include authorization logic alongside validation
+Automatic Validation: Laravel automatically validates before reaching your controller method
+Type Safety: Better IDE autocomplete and type hinting
+
+What Happens Automatically
+Before Controller Method Runs:
+
+✅ Checks authorization (staff only for create, owner only for update)
+✅ Validates all input data
+✅ If fails: redirects back with errors
+✅ If passes: controller method executes
+Error Handling:
+
+Automatically redirects back to form
+Keeps old input values
+Shows custom error messages
