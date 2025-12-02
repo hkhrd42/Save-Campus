@@ -14,13 +14,23 @@ class MealController extends Controller
      */
     public function index()
     {
-        // Get all meals created by the authenticated staff member
+        // Get all meals created by the authenticated staff member with claim counts
         $meals = Meal::where('user_id', auth()->id())
             ->withCount('claims')
             ->latest()
             ->paginate(10);
 
-        return view('meals.index', compact('meals'));
+        // Calculate dashboard metrics
+        // Get all meals (not paginated) for accurate totals
+        $allMeals = Meal::where('user_id', auth()->id())
+            ->withCount('claims')
+            ->get();
+
+        $totalMeals = $allMeals->count();
+        $totalPortions = $allMeals->sum('available_portions');
+        $totalClaims = $allMeals->sum('claims_count');
+
+        return view('meals.index', compact('meals', 'totalMeals', 'totalPortions', 'totalClaims'));
     }
 
     /**

@@ -10,17 +10,30 @@ use Illuminate\Support\Facades\DB;
 class ClaimController extends Controller
 {
     /**
-     * Display a listing of the user's claims.
+     * Display a listing of the user's claims (student dashboard).
      */
     public function index()
     {
+        // Get paginated claims with eager loaded relationships
         $claims = auth()->user()
             ->claims()
-            ->with('meal.staff')
+            ->with('meal.staff') // Eager load meal and staff to prevent N+1 queries
             ->latest()
             ->paginate(10);
 
-        return view('claims.index', compact('claims'));
+        // Calculate dashboard metrics
+        $allClaims = auth()->user()
+            ->claims()
+            ->with('meal')
+            ->get();
+
+        $totalClaims = $allClaims->count();
+        $activeClaims = $allClaims->filter(function ($claim) {
+            return !$claim->meal->isExpired();
+        })->count();
+        $expiredClaims = $totalClaims - $activeClaims;
+
+        return view('claims.index', compact('claims', 'totalClaims', 'activeClaims', 'expiredClaims'));
     }
 
     /**

@@ -342,4 +342,15 @@ Purpose: Students see their claimed meals
 ✅ Confirmation dialog on cancel
 ✅ Empty state with "Browse Meals" CTA
 
-# 
+# Dahsboards
+Dashboard Metrics are summary statistics that give staff members a quick overview of their meal management activity. Instead of just showing a list of meals, we display key performance indicators (KPIs) at the top.
+
+The Three Key Metrics
+1. Total Meals Posted
+How many meals has this staff member created?
+
+2. Total Portions Available
+Sum of all available_portions across all meals
+
+3. Total Claims
+Sum of all claims made on this staff member's meals
