@@ -72,7 +72,7 @@ BEGIN
         END
         
         -- Check if student already claimed this meal
-        IF EXISTS (SELECT 1 FROM Claims WHERE meal_id = @meal_id AND student_id = @user_id)
+        IF EXISTS (SELECT 1 FROM Claims WHERE foodID = @meal_id AND studentID = @user_id)
         BEGIN
             RAISERROR('You have already claimed this meal.', 16, 1);
             ROLLBACK TRANSACTION;
@@ -80,7 +80,7 @@ BEGIN
         END
         
         -- Insert claim
-        INSERT INTO Claims (meal_id, student_id, claimed_at)
+        INSERT INTO Claims (foodID, studentID, claimed_at)
         VALUES (@meal_id, @user_id, GETDATE());
         
         -- Update available portions
@@ -192,16 +192,16 @@ BEGIN
     SET NOCOUNT ON;
     
     SELECT 
-        c.claim_id,
+        c.claimID,
         m.MealName,
         m.mealDescription,
         c.claimed_at,
         m.expiryDate,
         u.Username AS staff_name
-    FROM Claims c
-    INNER JOIN Meals m ON c.meal_id = m.MealID
-    INNER JOIN Users u ON m.staffID = u.UserID
-    WHERE c.student_id = @user_id
+    FROM Claims c, Meals m, Users u
+    WHERE c.foodID = m.MealID
+        AND m.staffID = u.UserID
+        AND c.studentID = @user_id
     ORDER BY c.claimed_at DESC;
 END;
 GO
@@ -223,7 +223,7 @@ BEGIN
     
     SELECT @count = COUNT(*)
     FROM Claims
-    WHERE meal_id = @meal_id;
+    WHERE foodID = @meal_id;
     
     RETURN ISNULL(@count, 0);
 END;
@@ -280,7 +280,7 @@ RETURN
     SELECT 
         CASE WHEN EXISTS (
             SELECT 1 FROM Claims 
-            WHERE meal_id = @meal_id AND student_id = @user_id
+            WHERE foodID = @meal_id AND studentID = @user_id
         ) THEN 1 ELSE 0 END AS HasClaimed
 );
 GO
@@ -303,8 +303,7 @@ BEGIN
     
     UPDATE Users
     SET UpdatedAt = GETDATE()
-    FROM Users u
-    INNER JOIN inserted i ON u.UserID = i.UserID;
+    WHERE UserID IN (SELECT UserID FROM inserted);
 END;
 GO
 
@@ -322,8 +321,7 @@ BEGIN
     
     UPDATE Meals
     SET UpdatedAt = GETDATE()
-    FROM Meals m
-    INNER JOIN inserted i ON m.MealID = i.MealID;
+    WHERE MealID IN (SELECT MealID FROM inserted);
 END;
 GO
 
@@ -341,8 +339,8 @@ BEGIN
     
     IF EXISTS (
         SELECT 1 
-        FROM deleted d
-        INNER JOIN Claims c ON d.MealID = c.meal_id
+        FROM deleted d, Claims c
+        WHERE d.MealID = c.foodID
     )
     BEGIN
         RAISERROR('Cannot delete meals that have been claimed. Remove claims first.', 16, 1);
@@ -364,9 +362,9 @@ GO
 
 CREATE TABLE ClaimAudit (
     AuditID INT IDENTITY(1,1) PRIMARY KEY,
-    claim_id INT,
-    meal_id INT,
-    student_id INT,
+    claimID INT,
+    foodID INT,
+    studentID INT,
     action_type NVARCHAR(10),
     action_date DATETIME DEFAULT GETDATE()
 );
@@ -384,13 +382,13 @@ BEGIN
     SET NOCOUNT ON;
     
     -- Log insertions
-    INSERT INTO ClaimAudit (claim_id, meal_id, student_id, action_type)
-    SELECT claim_id, meal_id, student_id, 'INSERT'
+    INSERT INTO ClaimAudit (claimID, foodID, studentID, action_type)
+    SELECT claimID, foodID, studentID, 'INSERT'
     FROM inserted;
     
     -- Log deletions
-    INSERT INTO ClaimAudit (claim_id, meal_id, student_id, action_type)
-    SELECT claim_id, meal_id, student_id, 'DELETE'
+    INSERT INTO ClaimAudit (claimID, foodID, studentID, action_type)
+    SELECT claimID, foodID, studentID, 'DELETE'
     FROM deleted;
 END;
 GO
@@ -500,7 +498,7 @@ BEGIN
         -- Count claims for this student
         SELECT @claim_count = COUNT(*)
         FROM Claims
-        WHERE student_id = @student_id;
+        WHERE studentID = @student_id;
         
         -- Print student info
         PRINT 'Student: ' + @student_name;
@@ -544,8 +542,8 @@ BEGIN
     -- Declare cursor for all meals
     DECLARE stats_cursor CURSOR FOR
     SELECT m.MealID, m.MealName, u.Username
-    FROM Meals m
-    INNER JOIN Users u ON m.staffID = u.UserID
+    FROM Meals m, Users u
+    WHERE m.staffID = u.UserID
     ORDER BY m.CreatedAt DESC;
     
     -- Open cursor

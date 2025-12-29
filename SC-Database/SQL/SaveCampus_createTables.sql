@@ -14,7 +14,7 @@ GO
 
 CREATE TABLE Meals (
     MealID INT PRIMARY KEY IDENTITY(1,1),
-    staffID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    staffID INT NOT NULL,
     MealName NVARCHAR(100) NOT NULL,
     mealDescription NVARCHAR(255),
     availableportion INT NOT NULL CHECK (availableportion >= 0),
@@ -23,26 +23,24 @@ CREATE TABLE Meals (
     UpdatedAt DATETIME DEFAULT GETDATE()
     
     CONSTRAINT FK_Meal_Staff
-        FOREIGN KEY (staff_id)
-        REFERENCES Users(user_id)
+        FOREIGN KEY (staffID)
+        REFERENCES Users(UserID)
         ON DELETE CASCADE
 );
 GO
 
 CREATE TABLE Claims (
-    claim_id INT IDENTITY(1,1) PRIMARY KEY,
-    meal_id INT NOT NULL,
-    student_id INT NOT NULL,
+    claimID INT IDENTITY(1,1) PRIMARY KEY,
+    foodID INT NOT NULL,
+    studentID INT NOT NULL,
     claimed_at DATETIME NOT NULL DEFAULT GETDATE(),
 
     CONSTRAINT FK_Claim_Meal
-        FOREIGN KEY (meal_id)
-        REFERENCES Meals(meal_id)
-        ON DELETE CASCADE,
+        FOREIGN KEY (foodID)
+        REFERENCES Meals(MealID),
 
     CONSTRAINT FK_Claim_Student
-        FOREIGN KEY (student_id)
-        REFERENCES Users(user_id)
-        ON DELETE CASCADE
+        FOREIGN KEY (studentID)
+        REFERENCES Users(UserID)
 );
 GO
